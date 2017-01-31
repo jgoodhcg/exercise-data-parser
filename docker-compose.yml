@@ -1,0 +1,12 @@
+version: '2'
+services:
+ clojure:
+    build:
+      context: .
+      dockerfile: clj.dockerfile
+    image: exercise-parser
+    container_name: exercise-data-parser-container
+    ports:
+      - "7888:7888"
+    volumes:
+      - .:/exercise-data-parser
