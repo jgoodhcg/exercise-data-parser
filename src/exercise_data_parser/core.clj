@@ -14,7 +14,10 @@
 
 (let [csv-str (slurp "/exercise-data-parser/resources/exercise-data-2016.csv")
       csv-vec (parse-csv csv-str)
-      keys (first csv-vec)]
-  keys)
+      workouts (->> csv-vec
+                   first
+                   (drop 3)
+                   vec)]
+  workouts)
 
 
