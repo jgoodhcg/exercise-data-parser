@@ -3,7 +3,7 @@
   (:require [clojure-csv.core :refer [parse-csv]]
             [clj-time.core :as time]
             [clj-time.coerce :as coerce]
-            [clojure.string :refer [split]]
+            [clojure.string :refer [split join]]
             [clojure.data.json :as json]))
 
 
@@ -17,7 +17,10 @@
       workouts (->> csv-vec
                    first
                    (drop 3)
-                   vec)]
+                   (map-indexed (fn [i v] [i (as-> v s
+                                                 (split s #"\s")
+                                                 (join #"-" s)
+                                                 (keyword s))])))]
   workouts)
 
 
