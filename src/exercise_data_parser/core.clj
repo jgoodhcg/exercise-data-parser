@@ -12,18 +12,23 @@
   [& args]
   (println "Hello, World!"))
 
-;; [{:start unix-time :stop unix-time :workout-name {:sets 1 :reps 2 :weight 3}}]
+;; [{:start unix-time
+;;   :stop unix-time
+;;   :data {:workout-name {:sets 1 :reps 2 :weight 3}}}]
+
 (let [csv-str (slurp "/exercise-data-parser/resources/exercise-data-2016.csv")
       csv-vec (parse-csv csv-str)
-      workouts (vec (->> csv-vec ;; [{:workout-name col-num}]
-                         first
-                         (drop 3)
-                         (map-indexed (fn [index workout-name]
-                                        {(as-> workout-name name-str
-                                           (split name-str #"\s")
-                                           (join #"-" name-str)
-                                           (keyword name-str))
-                                         index}))))
+      workouts (->> csv-vec ;; {index :workout-name}
+                    first
+                    (drop 3)
+                    (map-indexed (fn [index workout-name]
+                                   {(as-> workout-name name-str
+                                      (split name-str #"\s")
+                                      (join #"-" name-str)
+                                      (keyword name-str))
+                                    index}))
+                    (reduce conj)
+                    (clojure.set/map-invert))
       raw-data (rest csv-vec)
       data (->> raw-data
                 (map (fn [entry]
@@ -47,10 +52,18 @@
                                     (time/date-time
                                      year month day stop-hour stop-minute)
                                     (time/time-zone-for-offset -5))
+
+                             workout-raw (drop 3 entry)
+                             data (->>
+                                   workout-raw
+                                   (map-indexed
+                                    (fn [index srw]
+                                      {(get workouts index) srw})))
                              ]
 
                          {:start (coerce/to-long start)
-                          :stop  (coerce/to-long stop)}
+                          :stop  (coerce/to-long stop)
+                          :data  data}
                          ))))
       ]
   (take 4 data))
