@@ -58,7 +58,22 @@
                                    workout-raw
                                    (map-indexed
                                     (fn [index srw]
-                                      {(get workouts index) srw})))
+                                      (if (not= srw "")
+                                        {(get workouts index)
+                                         (as-> srw srw-str
+                                           (split srw-str #"\|\|")
+                                           (map (fn [s] (split s #";")) srw-str)
+                                           ;; (map (fn [s]
+                                           ;;        {:sets (nth s 0)
+                                           ;;         :reps (nth s 1)
+                                           ;;         :weight (nth s 2)})
+                                           ;;      srw-str)
+                                           ;; (vec srw-str)
+                                           )}
+                                        )))
+                                   (filter some?)
+                                   )
+                             
                              ]
 
                          {:start (coerce/to-long start)
@@ -66,6 +81,7 @@
                           :data  data}
                          ))))
       ]
-  (take 4 data))
+  (clojure.pprint/pprint (take 4 data)))
 
+;; (coerce/from-long 1452296340000)
 
