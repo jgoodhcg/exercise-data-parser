@@ -1,36 +1,16 @@
 # exercise-data-parser
 
-FIXME: description
+## TODO
+
+- [ ] include try's
+  - [ ] start stop
+  - [ ] error messages that give row number and cell
+  - [ ] gracefully drop values and continue
+- [ ] better solution than passing workouts down through three functions
 
 ## Installation
-
-Download from http://example.com/FIXME.
-
 ## Usage
-
-FIXME: explanation
-
-    $ java -jar exercise-data-parser-0.1.0-standalone.jar [args]
-
 ## Options
-
-FIXME: listing of options this app accepts.
-
 ## Examples
-
-...
-
 ### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
-
 ## License
-
-Copyright © 2017 FIXME
-
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
