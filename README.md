@@ -2,11 +2,10 @@
 
 ## TODO
 
-- [ ] include try's
-  - [ ] start stop
-  - [ ] error messages that give row number and cell
-  - [ ] gracefully drop values and continue
-- [ ] better solution than passing workouts down through three functions
+- [x] include try's
+  - [x] error messages that give row number and cell
+  - [x] gracefully drop values and continue
+- [ ] spit out json
 
 ## Installation
 ## Usage
