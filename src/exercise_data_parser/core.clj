@@ -13,7 +13,7 @@
   (println "Hello, World!"))
 
 (defn get-workouts [csv-vec]
-  (->> csv-vec 
+  (->> csv-vec
        first
        (drop 3)
        (map-indexed (fn [index workout-name]
@@ -25,8 +25,7 @@
        (reduce conj)
        (clojure.set/map-invert)))
 
-(defn parse-individual-workout [workouts index srw]
-  (pprint {:index index :srw srw})
+(defn parse-individual-workout [workouts row-num index srw]
   (try
     (if (not= srw "")
       {(get workouts index)
@@ -42,48 +41,57 @@
               srw-str)
          (vec srw-str))})
     (catch Exception e
-      (pprint (.getMessage e))
+      (pprint "--------")
+      (pprint e)
+      (pprint {:row row-num :index index :srw srw})
       nil)
     )
   )
 
-(defn parse-workouts [workout-raw workouts]
+(defn parse-workouts [workout-raw workouts row-num]
   (->> workout-raw
-       (map-indexed (partial parse-individual-workout workouts))
+       (map-indexed (partial parse-individual-workout workouts row-num))
        (filter some?))
   )
 
 (defn parse-days [raw-data workouts]
   (->> raw-data
-       (map (fn [entry]
-              (pprint entry)
-              (let [date (split (nth entry 0) #"/") ;; [month day year]
-                    ;; [hour minute] - 0-23 hour
-                    start-time (split (nth entry 1) #":")
-                    stop-time (split (nth entry 2) #":")
-                    year (Integer/parseInt (nth date 2))
-                    month (Integer/parseInt (nth date 0))
-                    day (Integer/parseInt (nth date 1))
-                    start-hour (Integer/parseInt (nth start-time 0))
-                    start-minute (Integer/parseInt (nth start-time 1))
-                    stop-hour (Integer/parseInt (nth start-time 0))
-                    stop-minute (Integer/parseInt (nth start-time 1))
+       (map-indexed (fn [index entry]
+              (try
+                (let [date (split (nth entry 0) #"/") ;; [month day year]
+                      ;; [hour minute] - 0-23 hour
+                      start-time (split (nth entry 1) #":")
+                      stop-time (split (nth entry 2) #":")
+                      year (Integer/parseInt (nth date 2))
+                      month (Integer/parseInt (nth date 0))
+                      day (Integer/parseInt (nth date 1))
+                      start-hour (Integer/parseInt (nth start-time 0))
+                      start-minute (Integer/parseInt (nth start-time 1))
+                      stop-hour (Integer/parseInt (nth start-time 0))
+                      stop-minute (Integer/parseInt (nth start-time 1))
 
-                    start (time/from-time-zone
-                           (time/date-time
-                            year month day start-hour start-minute)
-                           (time/time-zone-for-offset -5))
-                    stop (time/from-time-zone
-                          (time/date-time
-                           year month day stop-hour stop-minute)
-                          (time/time-zone-for-offset -5))
+                      start (time/from-time-zone
+                             (time/date-time
+                              year month day start-hour start-minute)
+                             (time/time-zone-for-offset -5))
+                      stop (time/from-time-zone
+                            (time/date-time
+                             year month day stop-hour stop-minute)
+                            (time/time-zone-for-offset -5))
 
-                    workout-raw (drop 3 entry)
-                    data (parse-workouts workout-raw workouts)]
+                      workout-raw (drop 3 entry)
+                      data (parse-workouts workout-raw workouts index)]
 
-                {:start (coerce/to-long start)
-                 :stop  (coerce/to-long stop)
-                 :data  data}))))
+                  {:start (coerce/to-long start)
+                   :stop  (coerce/to-long stop)
+                   :data  data})
+                (catch Exception e
+                  (pprint "--------")
+                  (pprint "--------")
+                  (pprint e)
+                  (print entry)
+                  nil))
+              )))
   )
 
 (let [csv-str  (slurp "/exercise-data-parser/resources/exercise-data-2016.csv")
