@@ -28,7 +28,7 @@
          (map (fn [s] {:sets (nth s 0)
                        :reps (nth s 1)
                        :weight (nth s 2)}) srw-str)
-         (vec srw-str))})
+         (into (sorted-map) srw-str))})
     (catch Exception e
       (pprint "--------")
       (pprint e)
@@ -84,18 +84,20 @@
 (defn filter-groups [entry]
   (update-in entry [:data]
              (fn [old]
-               {:runs (filter
-                       #(or
-                         (contains? % :runs-indoor-track)
-                         (contains? % :runs-outdoor-track)
-                         (contains? % :runs-street))
-                       old)
-                :excercises (filter
-                             #(and
-                               (not (contains? % :runs-indoor-track))
-                               (not (contains? % :runs-outdoor-track))
-                               (not (contains? % :runs-street)))
-                             old)})))
+               {:runs (into (sorted-map)
+                            (filter
+                             #(or
+                               (contains? % :runs-indoor-track)
+                               (contains? % :runs-outdoor-track)
+                               (contains? % :runs-street))
+                             old))
+                :exercises (into (sorted-map)
+                                 (filter
+                                  #(and
+                                    (not (contains? % :runs-indoor-track))
+                                    (not (contains? % :runs-outdoor-track))
+                                    (not (contains? % :runs-street)))
+                                  old))})))
 
 (defn -main
   [path]
