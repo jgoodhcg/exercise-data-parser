@@ -28,7 +28,7 @@
          (map (fn [s] {:sets (nth s 0)
                        :reps (nth s 1)
                        :weight (nth s 2)}) srw-str)
-         (into (sorted-map) srw-str))})
+         (vec srw-str))})
     (catch Exception e
       (pprint "--------")
       (pprint e)
