@@ -51,8 +51,8 @@
           day (Integer/parseInt (nth date 1))
           start-hour (Integer/parseInt (nth start-time 0))
           start-minute (Integer/parseInt (nth start-time 1))
-          stop-hour (Integer/parseInt (nth start-time 0))
-          stop-minute (Integer/parseInt (nth start-time 1))
+          stop-hour (Integer/parseInt (nth stop-time 0))
+          stop-minute (Integer/parseInt (nth stop-time 1))
 
           start (time/from-time-zone
                  (time/date-time
